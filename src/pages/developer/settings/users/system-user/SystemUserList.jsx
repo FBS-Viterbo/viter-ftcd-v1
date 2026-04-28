@@ -17,7 +17,7 @@ import ModalArchive from "../../../../../partials/modals/ModalArchive";
 import ModalRestore from "../../../../../partials/modals/ModalRestore";
 import ModalDelete from "../../../../../partials/modals/ModalDelete";
 
-const SystemUserList = ({ setItemEdit, itemEdit }) => {
+const SystemUserList = ({ setItemEdit, itemEdit, search, filter }) => {
   const { store, dispatch } = React.useContext(StoreContext);
 
   const {
@@ -29,6 +29,24 @@ const SystemUserList = ({ setItemEdit, itemEdit }) => {
     "get",
     "system-user"
   );
+
+  const filteredData = dataSystem?.data?.filter((item) => {
+    const q = search?.toLowerCase() ?? "";
+
+    const matchesSearch =
+      item.system_name?.toLowerCase().includes(q) ||
+      item.system_email?.toLowerCase().includes(q) ||
+      item.system_role?.toLowerCase().includes(q);
+
+    const matchesFilter =
+      filter === "all"
+        ? true
+        : filter === "active"
+          ? item.system_is_active == 1
+          : item.system_is_active == 0;
+
+    return matchesSearch && matchesFilter;
+  });
 
   const handleEdit = (item) => {
     dispatch(setIsAdd(true));
@@ -65,7 +83,6 @@ const SystemUserList = ({ setItemEdit, itemEdit }) => {
               <th>Name</th>
               <th>Email</th>
               <th>Role</th>
-              <th>Date</th>
               <th></th>
             </tr>
           </thead>
@@ -84,7 +101,7 @@ const SystemUserList = ({ setItemEdit, itemEdit }) => {
                 </td>
               </tr>
             ) : (
-              dataSystem?.data.map((item, key) => (
+              filteredData?.map((item, key) => (
                 <tr key={key}>
                   <td>{key + 1}</td>
 
@@ -95,7 +112,6 @@ const SystemUserList = ({ setItemEdit, itemEdit }) => {
                   <td>{item.system_name}</td>
                   <td>{item.system_email}</td>
                   <td>{item.system_role}</td>
-                  <td>{formatDate(item.system_created, "--", "short-date")}</td>
 
                   <td>
                     <div className="flex gap-3">
