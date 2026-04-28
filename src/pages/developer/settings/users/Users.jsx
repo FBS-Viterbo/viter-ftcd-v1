@@ -3,6 +3,7 @@ import Layout from "../../Layout";
 import { FaUserCircle, FaChevronRight } from "react-icons/fa";
 import { useNavigate, Link } from "react-router-dom";
 import { devNavUrl, urlDeveloper } from "../../../../functions/functions-general";
+import { IoArrowBack } from "react-icons/io5";
 
 const Users = () => {
   const navigate = useNavigate();
@@ -17,6 +18,7 @@ const Users = () => {
   return (
     <Layout menu="settings">
       <div className="flex items-center gap-2 mb-5 text-sm text-gray-500">
+        <IoArrowBack className="text-black font-bold size-5" />
         <Link to={`${base}/settings/users`} className="text-primary hover:underline">
           Settings
         </Link>
@@ -34,8 +36,8 @@ const Users = () => {
             onClick={() => navigate(item.path)}
           >
             <div className="flex items-center gap-3">
-              <FaUserCircle className="text-gray-500 text-lg" />
-              <span>{item.label}</span>
+              <FaUserCircle className="text-black text-lg" />
+              <span className="text-black font-bold">{item.label}</span>
             </div>
             <FaChevronRight className="text-gray-400 text-xs" />
           </button>

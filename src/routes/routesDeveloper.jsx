@@ -1,5 +1,6 @@
 import { devNavUrl, urlDeveloper } from "../functions/functions-general";
 import Donor from "../pages/developer/donor/Donor";
+import Category from "../pages/developer/settings/category/Category";
 import Users from "../pages/developer/settings/users/Users";
 import Roles from "../pages/developer/settings/users/roles/Roles";
 import SystemUser from "../pages/developer/settings/users/system-user/SystemUser";
@@ -34,6 +35,14 @@ export const routesDeveloper = [
     element: (
       <>
         <SystemUser />
+      </>
+    )
+  },
+  {
+    path: `${devNavUrl}/${urlDeveloper}/settings/category`,
+    element: (
+      <>
+        <Category />
       </>
     )
   },

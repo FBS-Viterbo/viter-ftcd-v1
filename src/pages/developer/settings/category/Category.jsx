@@ -1,15 +1,15 @@
 import React from "react";
-import Layout from "../../../Layout";
-import { setIsAdd } from "../../../../../store/StoreAction";
-import { StoreContext } from "../../../../../store/StoreContext";
-import { FaPlus } from "react-icons/fa";
+import Layout from "../../Layout";
+import { setIsAdd } from "../../../../store/StoreAction";
+import { StoreContext } from "../../../../store/StoreContext";
+import { FaPlus, FaBackward } from "react-icons/fa";
 import { Link } from "react-router-dom";
-import { devNavUrl, urlDeveloper } from "../../../../../functions/functions-general";
-import ModalAddSystemUser from "./ModalAddSystemUser";
-import SystemUserList from "./SystemUserList";
+import { devNavUrl, urlDeveloper } from "../../../../functions/functions-general";
+import ModalAddCategory from "./ModalAddCategory";
+import CategoryList from "./CategoryList";
 import { IoArrowBack } from "react-icons/io5";
 
-const SystemUser = () => {
+const Category = () => {
   const { store, dispatch } = React.useContext(StoreContext);
   const [itemEdit, setItemEdit] = React.useState(null);
   const [searchInput, setSearchInput] = React.useState("");
@@ -29,25 +29,21 @@ const SystemUser = () => {
 
   return (
     <>
-      <Layout menu="settings" submenu="system-user">
+      <Layout menu="settings" submenu="category">
 
         {/* breadcrumb */}
         <div className="flex items-center gap-2 mb-5 text-sm text-gray-500">
           <IoArrowBack className="text-black font-bold size-5" />
-          <Link to={`${devNavUrl}/${urlDeveloper}/settings/users`} className="text-primary hover:underline">
+          <Link to={`${devNavUrl}/${urlDeveloper}/settings/category`} className="text-primary hover:underline">
             Settings
           </Link>
           <span>&gt;</span>
-          <Link to={`${devNavUrl}/${urlDeveloper}/settings/users`} className="text-primary hover:underline">
-            Users
-          </Link>
-          <span>&gt;</span>
-          <span>System</span>
+          <span>Category</span>
         </div>
 
         {/* header */}
         <div className="flex items-center w-full justify-between mb-3">
-          <h1 className="text-2xl font-bold my-5">System Users</h1>
+          <h1 className="text-2xl font-bold my-5">Categories</h1>
           <button
             type="button"
             className="flex items-center gap-1 hover:underline"
@@ -82,7 +78,7 @@ const SystemUser = () => {
 
         {/* content */}
         <div>
-          <SystemUserList
+          <CategoryList
             itemEdit={itemEdit}
             setItemEdit={setItemEdit}
             search={search}
@@ -93,10 +89,10 @@ const SystemUser = () => {
       </Layout>
 
       {store.isAdd && (
-        <ModalAddSystemUser itemEdit={itemEdit} />
+        <ModalAddCategory itemEdit={itemEdit} />
       )}
     </>
   );
 };
 
-export default SystemUser;
+export default Category;
