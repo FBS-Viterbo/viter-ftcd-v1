@@ -23,11 +23,15 @@ const SystemUser = () => {
 
         {/* breadcrumb */}
         <div className="flex items-center gap-2 mb-5 text-sm text-gray-500">
-          <Link to={`${devNavUrl}/${urlDeveloper}/settings`} className="text-primary hover:underline">
+          <Link to={`${devNavUrl}/${urlDeveloper}/settings/users`} className="text-primary hover:underline">
             Settings
           </Link>
           <span>&gt;</span>
-          <span>System User</span>
+          <Link to={`${devNavUrl}/${urlDeveloper}/settings/users`} className="text-primary hover:underline">
+            Users
+          </Link>
+          <span>&gt;</span>
+          <span>System</span>
         </div>
 
         {/* header */}

@@ -13,9 +13,7 @@ import {
 import ModalWrapperSide from "../../../../../partials/modals/ModalWrapperSide";
 import { FaTimes } from "react-icons/fa";
 import { Formik, Form } from "formik";
-import {
-  InputText,
-} from "../../../../../components/form-inputs/FormInputs";
+import { InputText } from "../../../../../components/form-inputs/FormInputs";
 import ButtonSpinner from "../../../../../partials/spinners/ButtonSpinner";
 import MessageError from "../../../../../partials/MessageError";
 
@@ -27,8 +25,8 @@ const ModalAddSystemUser = ({ itemEdit }) => {
     mutationFn: (values) =>
       queryData(
         itemEdit
-          ? `${apiVersion}/controllers/developers/settings/system/system.php?id=${itemEdit.system_aid}`
-          : `${apiVersion}/controllers/developers/settings/system/system.php`,
+          ? `${apiVersion}/controllers/developers/settings/system-user/system.php?id=${itemEdit.system_aid}`
+          : `${apiVersion}/controllers/developers/settings/system-user/system.php`,
         itemEdit ? "put" : "post",
         values
       ),
@@ -67,55 +65,103 @@ const ModalAddSystemUser = ({ itemEdit }) => {
   }, []);
 
   return (
-    <ModalWrapperSide handleClose={handleClose}>
-
+    <ModalWrapperSide
+      handleClose={handleClose}
+      className="transition-all ease-in-out transform duration-200"
+    >
       {/* header */}
-      <div className="mb-4 flex justify-between">
-        <h3 className="text-sm">
+      <div className="moda-header relative mb-4">
+        <h3 className="text-dark text-sm">
           {itemEdit ? "Update" : "Add"} System User
         </h3>
-        <button onClick={handleClose}>
+
+        <button
+          type="button"
+          className="absolute top-0 right-4"
+          onClick={handleClose}
+        >
           <FaTimes />
         </button>
       </div>
 
       {/* body */}
-      <Formik
-        initialValues={initVal}
-        validationSchema={yupSchema}
-        onSubmit={(values) => mutation.mutate(values)}
-      >
-        {(props) => (
-          <Form>
+      <div className="modal-body">
+        <Formik
+          initialValues={initVal}
+          validationSchema={yupSchema}
+          onSubmit={(values) => mutation.mutate(values)}
+        >
+          {(props) => (
+            <Form className="h-full">
 
-            <InputText label="Name" name="system_name" />
-            <InputText label="Email" name="system_email" />
-            <InputText label="Role" name="system_role" />
+              <div className="modal-form-container">
+                <div className="modal-container">
 
-            {store.error && <MessageError />}
+                  {/* name */}
+                  <div className="relative mb-6">
+                    <InputText
+                      label="Name"
+                      name="system_name"
+                      type="text"
+                      disabled={mutation.isPending}
+                    />
+                  </div>
 
-            <div className="flex gap-2 mt-5">
-              <button
-                type="submit"
-                disabled={mutation.isPending || !props.dirty}
-                className="btn-modal-submit"
-              >
-                {mutation.isPending ? <ButtonSpinner /> : itemEdit ? "Save" : "Add"}
-              </button>
+                  {/* email */}
+                  <div className="relative mt-5 mb-6">
+                    <InputText
+                      label="Email"
+                      name="system_email"
+                      type="text"
+                      disabled={mutation.isPending}
+                    />
+                  </div>
 
-              <button
-                type="button"
-                onClick={handleClose}
-                className="btn-modal-cancel"
-              >
-                Cancel
-              </button>
-            </div>
+                  {/* role */}
+                  <div className="relative mt-5 mb-6">
+                    <InputText
+                      label="Role"
+                      name="system_role"
+                      type="text"
+                      disabled={mutation.isPending}
+                    />
+                  </div>
 
-          </Form>
-        )}
-      </Formik>
+                  {store.error && <MessageError />}
 
+                </div>
+
+                {/* buttons (MATCHED STYLE) */}
+                <div className="modal-action">
+                  <button
+                    type="submit"
+                    disabled={mutation.isPending || !props.dirty}
+                    className="btn-modal-submit"
+                  >
+                    {mutation.isPending ? (
+                      <ButtonSpinner />
+                    ) : itemEdit ? (
+                      "Save"
+                    ) : (
+                      "Add"
+                    )}
+                  </button>
+
+                  <button
+                    type="button"
+                    className="btn-modal-cancel"
+                    onClick={handleClose}
+                    disabled={mutation.isPending}
+                  >
+                    Cancel
+                  </button>
+                </div>
+
+              </div>
+            </Form>
+          )}
+        </Formik>
+      </div>
     </ModalWrapperSide>
   );
 };

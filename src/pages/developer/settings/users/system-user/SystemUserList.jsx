@@ -132,7 +132,7 @@ const SystemUserList = ({ setItemEdit }) => {
 
       {store.isArchive && (
         <ModalArchive
-          mysqlApiArchive={`${apiVersion}/controllers/developers/settings/system/active.php?id=${store.itemEdit?.system_aid}`}
+          mysqlApiArchive={`${apiVersion}/controllers/developers/settings/system-user/active.php?id=${store.itemEdit?.system_aid}`}
           msg="Archive this user?"
           queryKey="system-user"
           item={store.itemEdit?.system_name}
@@ -141,7 +141,7 @@ const SystemUserList = ({ setItemEdit }) => {
 
       {store.isRestore && (
         <ModalRestore
-          mysqlApiRestore={`${apiVersion}/controllers/developers/settings/system/active.php?id=${store.itemEdit?.system_aid}`}
+          mysqlApiRestore={`${apiVersion}/controllers/developers/settings/system-user/active.php?id=${store.itemEdit?.system_aid}`}
           msg="Restore this user?"
           queryKey="system-user"
           item={store.itemEdit?.system_name}
@@ -150,7 +150,7 @@ const SystemUserList = ({ setItemEdit }) => {
 
       {store.isDelete && (
         <ModalDelete
-          mysqlApiDelete={`${apiVersion}/controllers/developers/settings/system/system.php?id=${store.itemEdit?.system_aid}`}
+          mysqlApiDelete={`${apiVersion}/controllers/developers/settings/system-user/system.php?id=${store.itemEdit?.system_aid}`}
           msg="Delete this user?"
           queryKey="system-user"
           item={store.itemEdit?.system_name}
