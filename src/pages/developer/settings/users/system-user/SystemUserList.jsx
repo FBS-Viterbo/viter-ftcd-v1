@@ -17,7 +17,7 @@ import ModalArchive from "../../../../../partials/modals/ModalArchive";
 import ModalRestore from "../../../../../partials/modals/ModalRestore";
 import ModalDelete from "../../../../../partials/modals/ModalDelete";
 
-const SystemUserList = ({ setItemEdit }) => {
+const SystemUserList = ({ setItemEdit, itemEdit }) => {
   const { store, dispatch } = React.useContext(StoreContext);
 
   const {
@@ -37,6 +37,7 @@ const SystemUserList = ({ setItemEdit }) => {
 
   const handleArchive = (item) => {
     dispatch(setIsArchive(true));
+    console.log("ARCHIVE ITEM:", item);
     setItemEdit(item);
   };
 
@@ -132,28 +133,28 @@ const SystemUserList = ({ setItemEdit }) => {
 
       {store.isArchive && (
         <ModalArchive
-          mysqlApiArchive={`${apiVersion}/controllers/developers/settings/system-user/active.php?id=${store.itemEdit?.system_aid}`}
+          mysqlApiArchive={`${apiVersion}/controllers/developers/settings/system-user/active.php?id=${itemEdit?.system_aid}`}
           msg="Archive this user?"
           queryKey="system-user"
-          item={store.itemEdit?.system_name}
+          item={itemEdit?.system_name}
         />
       )}
 
       {store.isRestore && (
         <ModalRestore
-          mysqlApiRestore={`${apiVersion}/controllers/developers/settings/system-user/active.php?id=${store.itemEdit?.system_aid}`}
+          mysqlApiRestore={`${apiVersion}/controllers/developers/settings/system-user/active.php?id=${itemEdit?.system_aid}`}
           msg="Restore this user?"
           queryKey="system-user"
-          item={store.itemEdit?.system_name}
+          item={itemEdit?.system_name}
         />
       )}
 
       {store.isDelete && (
         <ModalDelete
-          mysqlApiDelete={`${apiVersion}/controllers/developers/settings/system-user/system.php?id=${store.itemEdit?.system_aid}`}
+          mysqlApiDelete={`${apiVersion}/controllers/developers/settings/system-user/system.php?id=${itemEdit?.system_aid}`}
           msg="Delete this user?"
           queryKey="system-user"
-          item={store.itemEdit?.system_name}
+          item={itemEdit?.system_name}
         />
       )}
     </>
