@@ -2,6 +2,7 @@ import { devNavUrl, urlDeveloper } from "../functions/functions-general";
 import Donor from "../pages/developer/donor/Donor";
 import Users from "../pages/developer/settings/users/Users";
 import Roles from "../pages/developer/settings/users/roles/Roles";
+import SystemUser from "../pages/developer/settings/users/system-user/SystemUser";
 
 export const routesDeveloper = [
   {
@@ -27,6 +28,14 @@ export const routesDeveloper = [
         <Roles />
       </>
     ),
+  },
+  {
+    path: `${devNavUrl}/${urlDeveloper}/settings/users/system-user`,
+    element: (
+      <>
+        <SystemUser />
+      </>
+    )
   },
   // {
   //   path: `${devNavUrl}/${urlDeveloper}/childrenList`,
