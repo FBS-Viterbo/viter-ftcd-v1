@@ -2,6 +2,7 @@ import { devNavUrl, urlDeveloper } from "../functions/functions-general";
 import Donor from "../pages/developer/donor/Donor";
 import Category from "../pages/developer/settings/category/Category";
 import Designation from "../pages/developer/settings/designation/Designation";
+import Notification from "../pages/developer/settings/notification/Notification";
 import Users from "../pages/developer/settings/users/Users";
 import Roles from "../pages/developer/settings/users/roles/Roles";
 import SystemUser from "../pages/developer/settings/users/system-user/SystemUser";
@@ -51,7 +52,15 @@ export const routesDeveloper = [
     path: `${devNavUrl}/${urlDeveloper}/settings/designation`,
     element: (
       <>
-        <Designation/>
+        <Designation />
+      </>
+    )
+  },
+  {
+    path: `${devNavUrl}/${urlDeveloper}/settings/notification`,
+    element: (
+      <>
+        <Notification />
       </>
     )
   },
