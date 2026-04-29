@@ -84,7 +84,7 @@ const NotificationList = ({ setItemEdit, itemEdit, search, filter }) => {
               <th>Email</th>
               <th>Phone</th>
               <th>Purpose</th>
-              <th></th>
+              <th>Action</th>
             </tr>
           </thead>
 

@@ -89,6 +89,12 @@ const Designation = () => {
           />
         </div>
 
+
+        <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2 text-center">
+          <p>2026 All rights reserved.</p>
+          <p>Powered by <a className="text-blue-400">Frontline Business Solutions, Inc.</a></p>
+        </div>
+
       </Layout>
 
       {store.isAdd && (
