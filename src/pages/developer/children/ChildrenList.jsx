@@ -4,95 +4,124 @@ import { useInfiniteQuery } from "@tanstack/react-query";
 import { queryDataInfinite } from "../../../functions/custom-hooks/queryDataInfinite";
 import { apiVersion } from "../../../functions/functions-general";
 import { useInView } from "react-intersection-observer";
+
 import NoData from "../../../partials/NoData";
-import ServerError from "../../../partials/ServerError";
 import TableLoading from "../../../partials/TableLoading";
 import FetchingSpinner from "../../../partials/spinners/FetchingSpinner";
-import Loadmore from "../../../partials/Loadmore";
 import Status from "../../../partials/Status";
 import SearchBar from "../../../partials/SearchBar";
 
-import { FaArchive, FaEdit, FaTrash, FaTrashRestore } from "react-icons/fa";
+import {
+  FaUsers,
+  FaEdit,
+  FaArchive,
+  FaTrash,
+  FaTrashRestore,
+} from "react-icons/fa";
+
 import {
   setIsAdd,
   setIsArchive,
   setIsDelete,
   setIsRestore,
 } from "../../../store/StoreAction";
+
 import ModalArchive from "../../../partials/modals/ModalArchive";
 import ModalRestore from "../../../partials/modals/ModalRestore";
 import ModalDelete from "../../../partials/modals/ModalDelete";
 
-const EmployeesList = ({ itemEdit, setItemEdit }) => {
+/* ✅ AGE FUNCTION */
+const getAge = (birthday) => {
+  if (!birthday) return "--";
+  const birth = new Date(birthday);
+  const today = new Date();
+  let age = today.getFullYear() - birth.getFullYear();
+  const m = today.getMonth() - birth.getMonth();
+  if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) {
+    age--;
+  }
+  return age;
+};
+
+/* ✅ MONEY FORMAT */
+const formatMoney = (value) => {
+  return `$${Number(value || 0).toFixed(2)}`;
+};
+
+const ChildrenList = ({ itemEdit, setItemEdit }) => {
   const { store, dispatch } = React.useContext(StoreContext);
-  // page
+
   const [page, setPage] = React.useState(1);
   const [filterData, setFilterData] = React.useState("");
-  const [onSearch, setOnSearch] = React.useState(false);
   const search = React.useRef({ value: "" });
+
   const { ref, inView } = useInView();
-  let counter = 1;
 
-  const handleEdit = (item) => {
-    dispatch(setIsAdd(true));
-    setItemEdit(item);
-  };
-  const handleArchive = (item) => {
-    dispatch(setIsArchive(true));
-    setItemEdit(item);
-  };
-  const handleRestore = (item) => {
-    dispatch(setIsRestore(true));
-    setItemEdit(item);
-  };
-  const handleDelete = (item) => {
-    dispatch(setIsDelete(true));
-    setItemEdit(item);
-  };
-
-  //use if with loadmore button and search bar
   const {
     data: result,
     error,
     fetchNextPage,
-    hasNextPage,
-    isFetching,
-    isFetchingNextPage,
     status,
+    isFetching,
   } = useInfiniteQuery({
-    queryKey: ["employees", search.current.value, store.isSearch, filterData],
+    queryKey: ["children", search.current.value, store.isSearch, filterData],
     queryFn: async ({ pageParam = 1 }) =>
       await queryDataInfinite(
-        ``, // search endpoint
-        `${apiVersion}/controllers/developers/employees/page.php?start=${pageParam}`, // list endpoint
-        // store.isSearch || isFilter, // search boolean, // search boolean
+        ``,
+        `${apiVersion}/controllers/developers/children/page.php?start=${pageParam}`,
         false,
         {
           filterData,
           searchValue: search?.current?.value,
         },
-        `post`,
+        "post"
       ),
     getNextPageParam: (lastPage) => {
       if (lastPage.page < lastPage.total) {
         return lastPage.page + lastPage.count;
       }
-      return;
     },
     refetchOnWindowFocus: false,
   });
+
   React.useEffect(() => {
     if (inView) {
       setPage((prev) => prev + 1);
       fetchNextPage();
     }
   }, [inView]);
+
+  const totalCount = result?.pages?.[0]?.total ?? 0;
+
+  const handleEdit = (item) => {
+    dispatch(setIsAdd(true));
+    setItemEdit(item);
+  };
+
+  const handleArchive = (item) => {
+    dispatch(setIsArchive(true));
+    setItemEdit(item);
+  };
+
+  const handleRestore = (item) => {
+    dispatch(setIsRestore(true));
+    setItemEdit(item);
+  };
+
+  const handleDelete = (item) => {
+    dispatch(setIsDelete(true));
+    setItemEdit(item);
+  };
+
+  let counter = 1;
+
   return (
     <>
-      <div className="flex items-enter justify-between py-5">
-        <div className="relative">
-          <label htmlFor="">Status</label>
+      {/* TOP BAR */}
+      <div className="flex items-center gap-4 py-3">
+        <div>
           <select
+            className="border border-gray-300 rounded px-2 text-sm"
             onChange={(e) => setFilterData(e.target.value)}
             value={filterData}
           >
@@ -101,105 +130,105 @@ const EmployeesList = ({ itemEdit, setItemEdit }) => {
             <option value="0">Inactive</option>
           </select>
         </div>
-        <SearchBar
-          search={search}
-          dispatch={dispatch}
-          store={store}
-          result={result?.pages}
-          isFetching={isFetching}
-          setOnSearch={setOnSearch}
-          onSearch={onSearch}
-        />
+
+        <div className="flex items-center gap-1 text-sm text-gray-600">
+          <FaUsers />
+          <span>{totalCount}</span>
+        </div>
+
+        <div className="ml-auto">
+          <SearchBar search={search} dispatch={dispatch} store={store} />
+        </div>
       </div>
 
-      <div className="relative pt-4 rounded-md">
-        {status !== "pending" && isFetching && <FetchingSpinner />}
+      {/* TABLE */}
+      <div className="relative pt-4">
+        {isFetching && status !== "pending" && <FetchingSpinner />}
+
         <table>
           <thead>
             <tr>
               <th>#</th>
               <th>Status</th>
-              <th>Employee Name</th>
-              <th>Department</th>
-              <th>Email</th>
+              <th>Name</th>
+              <th>Birth Date</th>
+              <th>Age</th>
+              <th>Residency Status</th>
+              <th>Donation Limit</th>
               <th></th>
             </tr>
           </thead>
+
           <tbody>
-            {/* loading screen for data */}
-            {!error &&
-              (status == "pending" || result?.pages[0]?.count == 0) && (
-                <tr>
-                  <td colSpan="100%" className="=p-10">
-                    {status == "pending" ? (
-                      <TableLoading cols={2} count={20} />
-                    ) : (
-                      <NoData />
-                    )}
-                  </td>
-                </tr>
-              )}
-            {/* if request is failed the show error message */}
-            {error && (
+            {status === "pending" ? (
               <tr>
-                <td colSpan="100%" className="=p-10">
-                  <ServerError />
+                <td colSpan="100%">
+                  <TableLoading cols={7} count={10} />
                 </td>
               </tr>
-            )}
-            {result?.pages?.map((page, key) => (
-              <React.Fragment key={key}>
-                {page?.data?.map((item, key) => {
-                  return (
+            ) : result?.pages?.[0]?.count === 0 ? (
+              <tr>
+                <td colSpan="100%">
+                  <NoData />
+                </td>
+              </tr>
+            ) : error ? (
+              <tr>
+                <td colSpan="100%">Something went wrong.</td>
+              </tr>
+            ) : (
+              result?.pages?.map((page, i) => (
+                <React.Fragment key={i}>
+                  {page?.data?.map((item, key) => (
                     <tr key={key}>
                       <td>{counter++}</td>
+
                       <td>
                         <Status
-                          text={`${item.employee_is_active == 1 ? "active" : "inactive"}`}
+                          text={
+                            item.children_is_active == 1
+                              ? "active"
+                              : "inactive"
+                          }
                         />
                       </td>
+
+                      <td>{item.children_full_name}</td>
+
+                      <td>{item.children_birthday}</td>
+
+                      {/* ✅ AGE */}
+                      <td>{getAge(item.children_birthday)}</td>
+
+                      {/* ✅ RESIDENCY STATUS */}
                       <td>
-                        {item.employee_first_name} {item.employee_last_name}
+                        {item.children_is_residence == 1
+                          ? "Resident"
+                          : "Non-Resident"}
                       </td>
-                      <td>{item.department_name || "--"}</td>
-                      <td>{item.employee_email}</td>
+
+                      {/* ✅ DONATION FORMAT */}
+                      <td>{formatMoney(item.children_donation_amout_limit)}</td>
+
                       <td>
-                        <div className="flex items-center gap-3">
-                          {item.employee_is_active == 1 ? (
+                        <div className="flex gap-3">
+                          {item.children_is_active == 1 ? (
                             <>
-                              <button
-                                type="button"
-                                className="tooltip-action-table"
-                                data-tooltip="Edit"
-                                onClick={() => handleEdit(item)}
-                              >
+                              <button onClick={() => handleEdit(item)}>
                                 <FaEdit />
                               </button>
-                              <button
-                                type="button"
-                                className="tooltip-action-table"
-                                data-tooltip="Archive"
-                                onClick={() => handleArchive(item)}
-                              >
+
+                              <button onClick={() => handleArchive(item)}>
                                 <FaArchive />
                               </button>
                             </>
                           ) : (
                             <>
-                              <button
-                                type="button"
-                                className="tooltip-action-table"
-                                data-tooltip="Restore"
-                                onClick={() => handleRestore(item)}
-                              >
+                              <button onClick={() => handleRestore(item)}>
                                 <FaTrashRestore />
                               </button>
-                              <button
-                                type="button"
-                                className="tooltip-action-table"
-                                data-tooltip="Delete"
-                                onClick={() => handleDelete(item)}
-                              >
+
+                              <button onClick={() => handleDelete(item)}>
                                 <FaTrash />
                               </button>
                             </>
@@ -207,58 +236,47 @@ const EmployeesList = ({ itemEdit, setItemEdit }) => {
                         </div>
                       </td>
                     </tr>
-                  );
-                })}
-              </React.Fragment>
-            ))}
+                  ))}
+                </React.Fragment>
+              ))
+            )}
           </tbody>
         </table>
-        <div className="loadmore flex justify-center flex-col items-center pb-10">
-          <Loadmore
-            fetchNextPage={fetchNextPage}
-            isFetchingNextPage={isFetchingNextPage}
-            hasNextPage={hasNextPage}
-            result={result?.pages[0]}
-            setPage={setPage}
-            page={page}
-            refView={ref}
-            isSearchOrFilter={store.isSearch || result?.isFilter}
-          />
-        </div>
       </div>
 
+      {/* MODALS (unchanged) */}
       {store.isArchive && (
         <ModalArchive
-          mysqlApiArchive={`${apiVersion}/controllers/developers/employees/active.php?id=${itemEdit.employee_aid}`}
-          msg="Are you sure you want to archive this record?"
-          successMsg="sucessfully archived."
-          item={`${itemEdit.employee_first_name} ${itemEdit.employee_last_name}`}
-          dataItem={itemEdit}
-          queryKey="employees"
+          mysqlApiArchive={`${apiVersion}/controllers/developers/children/active.php?id=${itemEdit?.children_aid}`}
+          msg="Archive this record?"
+          successMsg="Successfully archived."
+          item={itemEdit?.children_full_name}
+          queryKey="children"
         />
       )}
+
       {store.isRestore && (
         <ModalRestore
-          mysqlApiRestore={`${apiVersion}/controllers/developers/employees/active.php?id=${itemEdit.employee_aid}`}
-          msg="Are you sure you want to restore this record?"
-          successMsg="sucessfully restore."
-          item={`${itemEdit.employee_first_name} ${itemEdit.employee_last_name}`}
-          dataItem={itemEdit}
-          queryKey="employees"
+          mysqlApiRestore={`${apiVersion}/controllers/developers/children/active.php?id=${itemEdit?.children_aid}`}
+          msg="Restore this record?"
+          successMsg="Successfully restored."
+          item={itemEdit?.children_full_name}
+          queryKey="children"
         />
       )}
+
       {store.isDelete && (
         <ModalDelete
-          mysqlApiDelete={`${apiVersion}/controllers/developers/employees/employees.php?id=${itemEdit.employee_aid}`}
-          msg="Are you sure you want to delete this record?"
-          successMsg="sucessfully deleted."
-          item={`${itemEdit.employee_first_name} ${itemEdit.employee_last_name}`}
+          mysqlApiDelete={`${apiVersion}/controllers/developers/children/children.php?id=${itemEdit?.children_aid}`}
+          msg="Delete this record?"
+          successMsg="Successfully deleted."
+          item={itemEdit?.children_full_name}
           dataItem={itemEdit}
-          queryKey="employees"
+          queryKey="children"
         />
       )}
     </>
   );
 };
 
-export default EmployeesList;
+export default ChildrenList;

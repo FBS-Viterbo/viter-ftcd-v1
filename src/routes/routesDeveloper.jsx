@@ -1,4 +1,5 @@
 import { devNavUrl, urlDeveloper } from "../functions/functions-general";
+import Children from "../pages/developer/children/Children";
 import Donor from "../pages/developer/donor/Donor";
 import Category from "../pages/developer/settings/category/Category";
 import Designation from "../pages/developer/settings/designation/Designation";
@@ -13,6 +14,14 @@ export const routesDeveloper = [
     element: (
       <>
         <Donor />
+      </>
+    ),
+  },
+  {
+    path: `${devNavUrl}/${urlDeveloper}/childrenlist`,
+    element: (
+      <>
+        <Children />
       </>
     ),
   },
