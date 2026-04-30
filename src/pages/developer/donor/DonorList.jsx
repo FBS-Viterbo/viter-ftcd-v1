@@ -5,14 +5,13 @@ import { queryDataInfinite } from "../../../functions/custom-hooks/queryDataInfi
 import { apiVersion } from "../../../functions/functions-general";
 import { useInView } from "react-intersection-observer";
 import NoData from "../../../partials/NoData";
-import ServerError from "../../../partials/ServerError";
 import TableLoading from "../../../partials/TableLoading";
 import FetchingSpinner from "../../../partials/spinners/FetchingSpinner";
-import Loadmore from "../../../partials/Loadmore";
 import Status from "../../../partials/Status";
 import SearchBar from "../../../partials/SearchBar";
-import { FaUsers } from "react-icons/fa";
+import { FaUsers, FaEdit, FaArchive, FaTrash, FaTrashRestore } from "react-icons/fa";
 import {
+  setIsAdd,
   setIsArchive,
   setIsDelete,
   setIsRestore,
@@ -23,25 +22,13 @@ import ModalDelete from "../../../partials/modals/ModalDelete";
 
 const DonorList = ({ itemEdit, setItemEdit }) => {
   const { store, dispatch } = React.useContext(StoreContext);
+
   const [page, setPage] = React.useState(1);
   const [filterData, setFilterData] = React.useState("");
   const [onSearch, setOnSearch] = React.useState(false);
   const search = React.useRef({ value: "" });
-  const { ref, inView } = useInView();
-  let counter = 1;
 
-  const handleArchive = (item) => {
-    dispatch(setIsArchive(true));
-    setItemEdit(item);
-  };
-  const handleRestore = (item) => {
-    dispatch(setIsRestore(true));
-    setItemEdit(item);
-  };
-  const handleDelete = (item) => {
-    dispatch(setIsDelete(true));
-    setItemEdit(item);
-  };
+  const { ref, inView } = useInView();
 
   const {
     data: result,
@@ -59,13 +46,12 @@ const DonorList = ({ itemEdit, setItemEdit }) => {
         `${apiVersion}/controllers/developers/donor/page.php?start=${pageParam}`,
         false,
         { filterData, searchValue: search?.current?.value },
-        `post`,
+        `post`
       ),
     getNextPageParam: (lastPage) => {
       if (lastPage.page < lastPage.total) {
         return lastPage.page + lastPage.count;
       }
-      return;
     },
     refetchOnWindowFocus: false,
   });
@@ -79,15 +65,38 @@ const DonorList = ({ itemEdit, setItemEdit }) => {
 
   const totalCount = result?.pages[0]?.total ?? 0;
 
+  const handleEdit = (item) => {
+    dispatch(setIsAdd(true));
+    setItemEdit(item);
+  };
+
+  const handleArchive = (item) => {
+    dispatch(setIsArchive(true));
+    setItemEdit(item);
+  };
+
+  const handleRestore = (item) => {
+    dispatch(setIsRestore(true));
+    setItemEdit(item);
+  };
+
+  const handleDelete = (item) => {
+    dispatch(setIsDelete(true));
+    setItemEdit(item);
+  };
+
+  let counter = 1;
+
   return (
     <>
+      {/* TOP BAR (KEEP YOUR ORIGINAL) */}
       <div className="flex items-center gap-4 py-3">
         <div className="relative">
-          <label className="absolute -top-2 left-2 text-xs text-primary bg-white px-1">
+          <label className="absolute top-4 left-2 text-xs text-primary bg-white px-1">
             Status
           </label>
           <select
-            className="border border-gray-300 rounded px-2 pt-3 pb-1 text-sm"
+            className="border border-gray-300 rounded px-2 text-sm"
             onChange={(e) => setFilterData(e.target.value)}
             value={filterData}
           >
@@ -97,6 +106,7 @@ const DonorList = ({ itemEdit, setItemEdit }) => {
           </select>
         </div>
 
+        {/* ✅ KEEP THIS PART */}
         <div className="flex items-center gap-1 text-sm text-gray-600">
           <FaUsers />
           <span>{totalCount}</span>
@@ -115,110 +125,126 @@ const DonorList = ({ itemEdit, setItemEdit }) => {
         </div>
       </div>
 
-      <div className="relative rounded-md">
-        {status !== "pending" && isFetching && <FetchingSpinner />}
-        <table className="w-full text-sm">
+      {/* TABLE (NOW MATCHES DESIGNATION STYLE) */}
+      <div className="relative pt-4">
+        {isFetching && status !== "pending" && <FetchingSpinner />}
+
+        <table>
           <thead>
-            <tr className="bg-gray-100">
-              <th className="text-left px-3 py-2">#</th>
-              <th className="text-left px-3 py-2">Status</th>
-              <th className="text-left px-3 py-2">Name</th>
-              <th className="text-left px-3 py-2">Email</th>
-              <th className="text-left px-3 py-2">Stripe ID</th>
-              <th className="px-3 py-2"></th>
+            <tr>
+              <th>#</th>
+              <th>Status</th>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Stripe ID</th>
+              <th></th>
             </tr>
           </thead>
+
           <tbody>
-            {!error &&
-              (status === "pending" || result?.pages[0]?.count === 0) && (
-                <tr>
-                  <td colSpan="100%" className="p-10">
-                    {status === "pending" ? (
-                      <TableLoading cols={5} count={10} />
-                    ) : (
-                      <NoData />
-                    )}
-                  </td>
-                </tr>
-              )}
-            {error && (
+            {status === "pending" ? (
               <tr>
-                <td colSpan="100%" className="p-10">
-                  <ServerError />
+                <td colSpan="100%">
+                  <TableLoading cols={6} count={10} />
                 </td>
               </tr>
+            ) : result?.pages[0]?.count === 0 ? (
+              <tr>
+                <td colSpan="100%">
+                  <NoData />
+                </td>
+              </tr>
+            ) : error ? (
+              <tr>
+                <td colSpan="100%">Something went wrong.</td>
+              </tr>
+            ) : (
+              result?.pages?.map((page, i) => (
+                <React.Fragment key={i}>
+                  {page?.data?.map((item, key) => (
+                    <tr key={key}>
+                      <td>{counter++}</td>
+
+                      <td>
+                        <Status
+                          text={item.donor_is_active == 1 ? "active" : "inactive"}
+                        />
+                      </td>
+
+                      <td>
+                        {item.donor_first_name} {item.donor_last_name}
+                      </td>
+
+                      <td>{item.donor_email}</td>
+
+                      <td>{item.donor_stripe || "--"}</td>
+
+                      <td>
+                        <div className="flex gap-3">
+                          {item.donor_is_active == 1 ? (
+                            <>
+                              <button onClick={() => handleEdit(item)}>
+                                <FaEdit />
+                              </button>
+
+                              <button onClick={() => handleArchive(item)}>
+                                <FaArchive />
+                              </button>
+                            </>
+                          ) : (
+                            <>
+                              <button onClick={() => handleRestore(item)}>
+                                <FaTrashRestore />
+                              </button>
+
+                              <button onClick={() => handleDelete(item)}>
+                                <FaTrash />
+                              </button>
+                            </>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </React.Fragment>
+              ))
             )}
-            {result?.pages?.map((page, key) => (
-              <React.Fragment key={key}>
-                {page?.data?.map((item, key) => (
-                  <tr key={key} className="border-b border-gray-100">
-                    <td className="px-3 py-2">{counter++}.</td>
-                    <td className="px-3 py-2">
-                      <Status
-                        text={item.donor_is_active == 1 ? "active" : "inactive"}
-                      />
-                    </td>
-                    <td className="px-3 py-2">
-                      {item.donor_first_name} {item.donor_last_name}
-                    </td>
-                    <td className="px-3 py-2">{item.donor_email}</td>
-                    <td className="px-3 py-2">{item.donor_stripe || "--"}</td>
-                    <td className="px-3 py-2 text-right">
-                      <button
-                        type="button"
-                        className="bg-primary text-white text-xs px-3 py-1 rounded"
-                        onClick={() => {}}
-                      >
-                        Donate
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </React.Fragment>
-            ))}
           </tbody>
         </table>
-
-        <div className="flex justify-center flex-col items-center pb-10">
-          <Loadmore
-            fetchNextPage={fetchNextPage}
-            isFetchingNextPage={isFetchingNextPage}
-            hasNextPage={hasNextPage}
-            result={result?.pages[0]}
-            setPage={setPage}
-            page={page}
-            refView={ref}
-            isSearchOrFilter={store.isSearch || result?.isFilter}
-          />
-        </div>
       </div>
 
+      <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2 text-center">
+        <p>2026 All rights reserved.</p>
+        <p>Powered by <a className="text-blue-400">Frontline Business Solutions, Inc.</a></p>
+      </div>
+
+      {/* MODALS */}
       {store.isArchive && (
         <ModalArchive
-          mysqlApiArchive={`${apiVersion}/controllers/developers/donor/active.php?id=${itemEdit.donor_aid}`}
-          msg="Are you sure you want to archive this record?"
+          mysqlApiArchive={`${apiVersion}/controllers/developers/donor/active.php?id=${itemEdit?.donor_aid}`}
+          msg="Archive this donor?"
           successMsg="Successfully archived."
-          item={`${itemEdit.donor_first_name} ${itemEdit.donor_last_name}`}
-          dataItem={itemEdit}
+          item={`${itemEdit?.donor_first_name} ${itemEdit?.donor_last_name}`}
           queryKey="donors"
         />
       )}
+
       {store.isRestore && (
         <ModalRestore
-          mysqlApiRestore={`${apiVersion}/controllers/developers/donor/active.php?id=${itemEdit.donor_aid}`}
-          msg="Are you sure you want to restore this record?"
+          mysqlApiRestore={`${apiVersion}/controllers/developers/donor/active.php?id=${itemEdit?.donor_aid}`}
+          msg="Restore this donor?"
           successMsg="Successfully restored."
-          item={`${itemEdit.donor_first_name} ${itemEdit.donor_last_name}`}
-          dataItem={itemEdit}
+          item={`${itemEdit?.donor_first_name} ${itemEdit?.donor_last_name}`}
           queryKey="donors"
         />
       )}
+
       {store.isDelete && (
         <ModalDelete
-          mysqlApiDelete={`${apiVersion}/controllers/developers/donor/donor.php?id=${itemEdit.donor_aid}`}
-          msg="Are you sure you want to delete this record?"
+          mysqlApiDelete={`${apiVersion}/controllers/developers/donor/donor.php?id=${itemEdit?.donor_aid}`}
+          msg="Delete this donor?"
           successMsg="Successfully deleted."
-          item={`${itemEdit.donor_first_name} ${itemEdit.donor_last_name}`}
+          item={`${itemEdit?.donor_first_name} ${itemEdit?.donor_last_name}`}
           dataItem={itemEdit}
           queryKey="donors"
         />

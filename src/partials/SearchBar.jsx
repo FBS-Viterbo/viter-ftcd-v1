@@ -46,7 +46,7 @@ const SearchBar = ({
       }}
       className="search-box"
     >
-      <div className={`${className} items-center relative`}>
+      <div className={`${className} items-center relative min-w-60`}>
         <span
           type="submit"
           className="absolute left-2 top-1.5 text-sm h-9 py-[3px] rounded-tr-none rounded-br-none border-l-0 text-gray-400 cursor-default "
