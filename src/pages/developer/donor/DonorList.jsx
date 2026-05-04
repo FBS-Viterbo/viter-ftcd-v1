@@ -138,6 +138,7 @@ const DonorList = ({ itemEdit, setItemEdit }) => {
               <th>Email</th>
               <th>Stripe ID</th>
               <th></th>
+              <th></th>
             </tr>
           </thead>
 
@@ -177,7 +178,11 @@ const DonorList = ({ itemEdit, setItemEdit }) => {
 
                       <td>{item.donor_email}</td>
 
-                      <td>{item.donor_stripe || "--"}</td>
+                      <td>{item.donor_stripe || ""}</td>
+
+                      <td>
+                        <button className="bg-blue-400 rounded py-1 px-4 text-white">Donate</button>
+                      </td>
 
                       <td>
                         <div className="flex gap-3">

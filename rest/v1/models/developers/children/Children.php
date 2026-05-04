@@ -7,7 +7,7 @@ class Children
     public $children_full_name;
     public $children_birthday;
     public $children_story;
-    public $children_donation_amout_limit;
+    public $children_donation_amount_limit;
     public $children_is_residence;
     public $children_created;
     public $children_updated;
@@ -32,29 +32,34 @@ class Children
         try {
             $sql = "insert into {$this->tblChildren} (";
             $sql .= " children_is_active, children_full_name, children_birthday, children_story,";
-            $sql .= " children_donation_amout_limit, children_is_residence,";
+            $sql .= " children_donation_amount_limit, children_is_residence,";
             $sql .= " children_created, children_updated";
             $sql .= ") values (";
             $sql .= " :children_is_active, :children_full_name, :children_birthday, :children_story,";
-            $sql .= " :children_donation_amout_limit, :children_is_residence,";
+            $sql .= " :children_donation_amount_limit, :children_is_residence,";
             $sql .= " :children_created, :children_updated";
             $sql .= ")";
 
             $query = $this->connection->prepare($sql);
             $query->execute([
-                "children_is_active"             => $this->children_is_active,
-                "children_full_name"             => $this->children_full_name,
-                "children_birthday"              => $this->children_birthday,
-                "children_story"                 => $this->children_story,
-                "children_donation_amout_limit"  => $this->children_donation_amout_limit,
-                "children_is_residence"          => $this->children_is_residence,
-                "children_created"               => $this->children_created,
-                "children_updated"               => $this->children_updated,
+                "children_is_active" => $this->children_is_active,
+                "children_full_name" => $this->children_full_name,
+                "children_birthday" => $this->children_birthday,
+                "children_story" => $this->children_story,
+                "children_donation_amount_limit" => $this->children_donation_amount_limit,
+                "children_is_residence" => $this->children_is_residence,
+                "children_created" => $this->children_created,
+                "children_updated" => $this->children_updated,
             ]);
 
             $this->lastInsertedId = $this->connection->lastInsertId();
         } catch (PDOException $e) {
-            $query = false;
+            return json_encode([
+                "count" => 0,
+                "success" => false,
+                "type" => "pdo_exception",
+                "error" => $e->getMessage()
+            ]);
         }
         return $query;
     }
@@ -94,8 +99,8 @@ class Children
             $query = $this->connection->prepare($sql);
 
             $params = [
-                "start" => (int)($this->start - 1),
-                "total" => (int)$this->total,
+                "start" => (int) ($this->start - 1),
+                "total" => (int) $this->total,
             ];
 
             if ($this->children_is_active != "") {
@@ -120,21 +125,21 @@ class Children
             $sql .= " children_full_name = :children_full_name, ";
             $sql .= " children_birthday = :children_birthday, ";
             $sql .= " children_story = :children_story, ";
-            $sql .= " children_donation_amout_limit = :children_donation_amout_limit, ";
+            $sql .= " children_donation_amount_limit = :children_donation_amount_limit, ";
             $sql .= " children_is_residence = :children_is_residence, ";
             $sql .= " children_updated = :children_updated ";
             $sql .= " where children_aid = :children_aid ";
 
             $query = $this->connection->prepare($sql);
             $query->execute([
-                "children_is_active"            => $this->children_is_active,
-                "children_full_name"            => $this->children_full_name,
-                "children_birthday"             => $this->children_birthday,
-                "children_story"                => $this->children_story,
-                "children_donation_amout_limit" => $this->children_donation_amout_limit,
-                "children_is_residence"         => $this->children_is_residence,
-                "children_updated"              => $this->children_updated,
-                "children_aid"                  => $this->children_aid,
+                "children_is_active" => $this->children_is_active,
+                "children_full_name" => $this->children_full_name,
+                "children_birthday" => $this->children_birthday,
+                "children_story" => $this->children_story,
+                "children_donation_amount_limit" => $this->children_donation_amount_limit,
+                "children_is_residence" => $this->children_is_residence,
+                "children_updated" => $this->children_updated,
+                "children_aid" => $this->children_aid,
             ]);
         } catch (PDOException $e) {
             $query = false;
@@ -153,8 +158,8 @@ class Children
             $query = $this->connection->prepare($sql);
             $query->execute([
                 "children_is_active" => $this->children_is_active,
-                "children_updated"   => $this->children_updated,
-                "children_aid"       => $this->children_aid,
+                "children_updated" => $this->children_updated,
+                "children_aid" => $this->children_aid,
             ]);
         } catch (PDOException $e) {
             $query = false;

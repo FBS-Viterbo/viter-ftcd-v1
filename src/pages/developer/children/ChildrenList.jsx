@@ -208,7 +208,7 @@ const ChildrenList = ({ itemEdit, setItemEdit }) => {
                       </td>
 
                       {/* ✅ DONATION FORMAT */}
-                      <td>{formatMoney(item.children_donation_amout_limit)}</td>
+                      <td>{formatMoney(item.children_donation_amount_limit)}</td>
 
                       <td>
                         <div className="flex gap-3">
