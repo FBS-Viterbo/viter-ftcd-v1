@@ -1,9 +1,9 @@
 <?php
 
-require '../../../../core/header.php';
-require '../../../../core/Encryption.php';
-require '../../../../core/functions.php';
-require '../../../../models/Donor.php';
+require '../../../core/header.php';
+require '../../../core/Encryption.php';
+require '../../../core/functions.php';
+require '../../../models/developers/donor/Donor.php';
 
 $conn = null;
 $conn = checkDbConnection();

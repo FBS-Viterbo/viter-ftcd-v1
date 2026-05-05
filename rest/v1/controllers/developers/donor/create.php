@@ -1,6 +1,6 @@
 <?php
 
-require '../../../../notifications/verify-account.php';
+require '../../../notifications/verify-account.php';
 
 $conn = checkDBConnection();
 $val = new Donor($conn);

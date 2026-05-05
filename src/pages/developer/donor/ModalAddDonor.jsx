@@ -48,17 +48,37 @@ const ModalAddDonor = ({ itemEdit }) => {
     },
   });
 
+  // const initVal = {
+  //   donor_is_active: itemEdit ? itemEdit.donor_is_active == 1 : false,
+  //   donor_first_name: itemEdit ? itemEdit.donor_first_name : "",
+  //   donor_last_name: itemEdit ? itemEdit.donor_last_name : "",
+  //   donor_email: itemEdit ? itemEdit.donor_email : "",
+  //   donor_contact: "",
+  //   donor_address: "",
+  //   donor_city: "",
+  //   donor_state: "",
+  //   donor_country: "",
+  //   donor_zip: "",
+  //   donor_first_name_old: itemEdit ? itemEdit.donor_first_name : "",
+  // };
+
   const initVal = {
     donor_is_active: itemEdit ? itemEdit.donor_is_active == 1 : false,
-    donor_first_name: itemEdit ? itemEdit.donor_first_name : "",
-    donor_last_name: itemEdit ? itemEdit.donor_last_name : "",
-    donor_email: itemEdit ? itemEdit.donor_email : "",
-    donor_contact: "",
-    donor_address: "",
-    donor_city: "",
-    donor_state: "",
-    donor_country: "",
-    donor_zip: "",
+
+    donor_first_name: itemEdit ? itemEdit.donor_first_name : "asdfsf",
+    donor_last_name: itemEdit ? itemEdit.donor_last_name : "asfasf",
+
+    donor_email: itemEdit
+      ? itemEdit.donor_email
+      : "jeremyviterbo19@gmail.com",
+
+    donor_contact: "123",
+    donor_address: "qerw",
+    donor_city: "qwer",
+    donor_state: "qwer",
+    donor_country: "qwer",
+    donor_zip: "4002",
+
     donor_first_name_old: itemEdit ? itemEdit.donor_first_name : "",
   };
 

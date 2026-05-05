@@ -35,6 +35,6 @@ class Response
         // }
         $this->_responseData = $this->_data;
 
-        echo json_encode($this->_responseData);
+        echo json_encode($this->_responseData, JSON_INVALID_UTF8_SUBSTITUTE);
     }
 }

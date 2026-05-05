@@ -26,6 +26,7 @@ class Donor
 
     public $connection;
     public $lastInsertedId;
+    public $lastError;
 
     public $tblDonor;
 
@@ -70,6 +71,7 @@ class Donor
             ]);
             $this->lastInsertedId = $this->connection->lastInsertId();
         } catch (PDOException $e) {
+            $this->lastError = $e->getMessage();
             $query = false;
         }
         return $query;

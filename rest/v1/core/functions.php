@@ -153,7 +153,11 @@ function checkLimitId($start, $total)
 function checkCreate($object)
 {
     $query = $object->create();
-    checkQuery($query, "There's a problem processing your request. (create)");
+    $error = "There's a problem processing your request. (create)";
+    if (!$query && property_exists($object, 'lastError') && !empty($object->lastError)) {
+        $error = $object->lastError;
+    }
+    checkQuery($query, $error);
     return $query;
 }
 

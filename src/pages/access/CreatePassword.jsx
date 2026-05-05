@@ -17,7 +17,7 @@ import PageNotFound from "../../partials/PageNotFound";
 import FetchingSpinner from "../../partials/spinners/FetchingSpinner";
 import ButtonSpinner from "../../partials/spinners/ButtonSpinner";
 import { setCreatePassSuccess } from "../../store/StoreAction";
-import { InputText } from "../../components/form-input/FormInputs";
+import { InputText } from "../../components/form-inputs/FormInputs";
 
 const CreatePasswordOther = () => {
   const { store, dispatch } = React.useContext(StoreContext);
@@ -34,7 +34,7 @@ const CreatePasswordOther = () => {
   const [lengthValidated, setLengthValidated] = React.useState(false);
 
   const { isLoading, data: key } = useQueryData(
-    `${apiVersion}/controllers/developers/settings/users/key.php?key=${paramKey}`, // endpoint
+    `${apiVersion}/controllers/developers/donor/key.php?key=${paramKey}`, // endpoint
     "get", // endpoint
     "other-user-password", // key
   );
@@ -42,7 +42,7 @@ const CreatePasswordOther = () => {
   const mutation = useMutation({
     mutationFn: (values) =>
       queryData(
-        `${apiVersion}/controllers/developers/settings/users/set-password.php`,
+        `${apiVersion}/controllers/developers/donor/set-password.php`,
         "post",
         values,
       ),

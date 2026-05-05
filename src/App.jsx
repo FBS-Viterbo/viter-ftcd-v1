@@ -14,6 +14,9 @@ function App() {
           <Router>
             <Routes>
               <Route path="*" element={<PageNotFound />} />
+              {routesDeveloper.map(({ ...routesProps }, key) => {
+                return <Route key={key} {...routesProps} />;
+              })}
               {routesAccess.map(({ ...routesProps }, key) => {
                 return <Route key={key} {...routesProps} />;
               })}
