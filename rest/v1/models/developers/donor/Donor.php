@@ -15,6 +15,8 @@ class Donor
     public $donor_state;
     public $donor_country;
     public $donor_zip;
+    public $donor_key;
+    public $donor_password;
     public $donor_created;
     public $donor_updated;
 
@@ -37,32 +39,34 @@ class Donor
     {
         try {
             $sql = "insert into {$this->tblDonor} (";
-            $sql .= " donor_is_active, donor_first_name, donor_middle_name, donor_last_name,";
+            $sql .= " donor_is_active, donor_key, donor_password, donor_first_name, donor_middle_name, donor_last_name,";
             $sql .= " donor_email, donor_stripe, donor_contact, donor_address,";
             $sql .= " donor_city, donor_state, donor_country, donor_zip,";
             $sql .= " donor_created, donor_updated";
             $sql .= ") values (";
-            $sql .= " :donor_is_active, :donor_first_name, :donor_middle_name, :donor_last_name,";
+            $sql .= " :donor_is_active, :donor_key, :donor_password, :donor_first_name, :donor_middle_name, :donor_last_name,";
             $sql .= " :donor_email, :donor_stripe, :donor_contact, :donor_address,";
             $sql .= " :donor_city, :donor_state, :donor_country, :donor_zip,";
             $sql .= " :donor_created, :donor_updated";
             $sql .= ")";
             $query = $this->connection->prepare($sql);
             $query->execute([
-                "donor_is_active"   => $this->donor_is_active,
-                "donor_first_name"  => $this->donor_first_name,
+                "donor_is_active" => $this->donor_is_active,
+                "donor_first_name" => $this->donor_first_name,
                 "donor_middle_name" => $this->donor_middle_name,
-                "donor_last_name"   => $this->donor_last_name,
-                "donor_email"       => $this->donor_email,
-                "donor_stripe"      => $this->donor_stripe,
-                "donor_contact"     => $this->donor_contact,
-                "donor_address"     => $this->donor_address,
-                "donor_city"        => $this->donor_city,
-                "donor_state"       => $this->donor_state,
-                "donor_country"     => $this->donor_country,
-                "donor_zip"         => $this->donor_zip,
-                "donor_created"     => $this->donor_created,
-                "donor_updated"     => $this->donor_updated,
+                "donor_last_name" => $this->donor_last_name,
+                "donor_email" => $this->donor_email,
+                "donor_stripe" => $this->donor_stripe,
+                "donor_contact" => $this->donor_contact,
+                "donor_address" => $this->donor_address,
+                "donor_city" => $this->donor_city,
+                "donor_state" => $this->donor_state,
+                "donor_country" => $this->donor_country,
+                "donor_zip" => $this->donor_zip,
+                "donor_key" => $this->donor_key,
+                "donor_password" => $this->donor_password,
+                "donor_created" => $this->donor_created,
+                "donor_updated" => $this->donor_updated,
             ]);
             $this->lastInsertedId = $this->connection->lastInsertId();
         } catch (PDOException $e) {
@@ -103,8 +107,8 @@ class Donor
             $sql .= " limit :start, :total ";
             $query = $this->connection->prepare($sql);
             $params = [
-                "start" => (int)($this->start - 1),
-                "total" => (int)$this->total,
+                "start" => (int) ($this->start - 1),
+                "total" => (int) $this->total,
             ];
             if ($this->donor_is_active != "") {
                 $params["donor_is_active"] = $this->donor_is_active;
@@ -126,6 +130,8 @@ class Donor
         try {
             $sql = "update {$this->tblDonor} set ";
             $sql .= " donor_is_active = :donor_is_active, ";
+            $sql .= " donor_key = :donor_key, ";
+            $sql .= " donor_password = :donor_password, ";
             $sql .= " donor_first_name = :donor_first_name, ";
             $sql .= " donor_middle_name = :donor_middle_name, ";
             $sql .= " donor_last_name = :donor_last_name, ";
@@ -141,24 +147,67 @@ class Donor
             $sql .= " where donor_aid = :donor_aid ";
             $query = $this->connection->prepare($sql);
             $query->execute([
-                "donor_is_active"   => $this->donor_is_active,
-                "donor_first_name"  => $this->donor_first_name,
+                "donor_is_active" => $this->donor_is_active,
+                "donor_first_name" => $this->donor_first_name,
                 "donor_middle_name" => $this->donor_middle_name,
-                "donor_last_name"   => $this->donor_last_name,
-                "donor_email"       => $this->donor_email,
-                "donor_stripe"      => $this->donor_stripe,
-                "donor_contact"     => $this->donor_contact,
-                "donor_address"     => $this->donor_address,
-                "donor_city"        => $this->donor_city,
-                "donor_state"       => $this->donor_state,
-                "donor_country"     => $this->donor_country,
-                "donor_zip"         => $this->donor_zip,
-                "donor_updated"     => $this->donor_updated,
-                "donor_aid"         => $this->donor_aid,
+                "donor_last_name" => $this->donor_last_name,
+                "donor_email" => $this->donor_email,
+                "donor_stripe" => $this->donor_stripe,
+                "donor_contact" => $this->donor_contact,
+                "donor_address" => $this->donor_address,
+                "donor_city" => $this->donor_city,
+                "donor_state" => $this->donor_state,
+                "donor_country" => $this->donor_country,
+                "donor_zip" => $this->donor_zip,
+                "donor_key" => $this->donor_key,
+                "donor_password" => $this->donor_password,
+                "donor_updated" => $this->donor_updated,
+                "donor_aid" => $this->donor_aid,
             ]);
         } catch (PDOException $e) {
             $query = false;
         }
+        return $query;
+    }
+
+    public function setPassword()
+    {
+        try {
+            $sql = " update {$this->tblDonor} set ";
+            $sql .= " donor_key = '', ";
+            $sql .= " donor_password = :donor_password, ";
+            $sql .= " donor_updated = :donor_updated ";
+            $sql .= " where donor_key = :donor_key ";
+
+            $query = $this->connection->prepare($sql);
+            $query->execute([
+                "donor_password" => $this->donor_password,
+                "donor_updated" => $this->donor_updated,
+                "donor_key" => $this->donor_key,
+            ]);
+
+        } catch (PDOException $e) {
+            $query = false;
+        }
+
+        return $query;
+    }
+
+    public function readKey()
+    {
+        try {
+            $sql = " select * from {$this->tblDonor} ";
+            $sql .= " where donor_key = :donor_key ";
+
+            $query = $this->connection->prepare($sql);
+            $query->execute([
+                "donor_key" => $this->donor_key,
+            ]);
+
+        } catch (PDOException $e) {
+            $query = false;
+        }
+
         return $query;
     }
 
@@ -172,8 +221,8 @@ class Donor
             $query = $this->connection->prepare($sql);
             $query->execute([
                 "donor_is_active" => $this->donor_is_active,
-                "donor_updated"   => $this->donor_updated,
-                "donor_aid"       => $this->donor_aid,
+                "donor_updated" => $this->donor_updated,
+                "donor_aid" => $this->donor_aid,
             ]);
         } catch (PDOException $e) {
             $query = false;
